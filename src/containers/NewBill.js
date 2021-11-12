@@ -19,15 +19,25 @@ export default class NewBill {
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
-    this.firestore
-      .storage
-      .ref(`justificatifs/${fileName}`)
-      .put(file)
-      .then(snapshot => snapshot.ref.getDownloadURL())
-      .then(url => {
-        this.fileUrl = url
-        this.fileName = fileName
-      })
+    const fileExtension = new RegExp('^.+\.(jpg|jpeg|png)$', "i")
+    const errorExtension = document.createElement('p');
+    errorExtension.id = 'bad-format'
+    errorExtension.innerText = "Veuillez sélectionner une image (.jpg, .jpeg ou .png)"
+    if (fileExtension.test(file.name)){
+      document.getElementById('bad-format').remove()
+      this.firestore
+        .storage
+        .ref(`justificatifs/${fileName}`)
+        .put(file)
+        .then(snapshot => snapshot.ref.getDownloadURL())
+        .then(url => {
+          this.fileUrl = url
+          this.fileName = fileName
+        })
+    } else {
+      e.target.value = null
+      e.target.parentElement.appendChild(errorExtension)
+    }
   }
   handleSubmit = e => {
     e.preventDefault()

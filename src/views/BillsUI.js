@@ -19,8 +19,10 @@ const row = (bill) => {
     `)
   }
 
-const rows = (data) => {
-  return (data && data.length) ? data.map(bill => row(bill)).join("") : ""
+const rows = (data) => {  
+  const antiChrono = (a, b) => ((new Date(a.date).getTime() < new Date(b.date).getTime()) ? 1 : -1)  
+  const dataByDate = [...data].sort(antiChrono)
+  return (data && data.length) ? dataByDate.map(bill => row(bill)).join("") : ""
 }
 
 export default ({ data: bills, loading, error }) => {
