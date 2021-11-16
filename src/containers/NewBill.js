@@ -23,8 +23,8 @@ export default class NewBill {
     const errorExtension = document.createElement('p');
     errorExtension.id = 'bad-format'
     errorExtension.innerText = "Veuillez sélectionner une image (.jpg, .jpeg ou .png)"
+    document.getElementById('bad-format') ? document.getElementById('bad-format').remove() : ""
     if (fileExtension.test(file.name)){
-      document.getElementById('bad-format').remove()
       this.firestore
         .storage
         .ref(`justificatifs/${fileName}`)
