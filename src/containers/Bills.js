@@ -28,6 +28,7 @@ export default class {
   }
 
   // not need to cover this function by tests
+  /* istanbul ignore next */
   getBills = () => {
     const userEmail = localStorage.getItem('user') ?
       JSON.parse(localStorage.getItem('user')).email : ""
@@ -41,7 +42,8 @@ export default class {
             try {
               return {
                 ...doc.data(),
-                date: formatDate(doc.data().date),
+                /* date: formatDate(doc.data().date), */
+                date: doc.data().date,
                 status: formatStatus(doc.data().status)
               }
             } catch(e) {
