@@ -10,6 +10,9 @@ export default () => {
           <div class='content-title'> Envoyer une note de frais </div>
         </div>
         <div class="form-newbill-container content-inner">
+          <button type="button" class="close" data-testid="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
           <form data-testid="form-new-bill">
             <div class="row">
                 <div class="col-md-6">
