@@ -19,7 +19,7 @@ export default class NewBill {
   }
   handleChangeFile = e => {
     console.log(e)
-    const file = this.document.querySelector(`input[data-testid="file"]`).files[0].name
+    const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
     const fileExtension = new RegExp('^.+\.(jpg|jpeg|png)$', "i")
@@ -28,7 +28,7 @@ export default class NewBill {
     errorExtension.setAttribute("data-testid", "error");
     errorExtension.innerText = "Veuillez sélectionner une image (.jpg, .jpeg ou .png)"
     document.getElementById('bad-format') ? document.getElementById('bad-format').remove() : ""
-    if (fileExtension.test(file)){
+    if (fileExtension.test(fileName)){
       this.firestore
         .storage
         .ref(`justificatifs/${fileName}`)
