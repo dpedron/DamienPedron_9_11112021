@@ -18,7 +18,6 @@ export default class NewBill {
     new Logout({ document, localStorage, onNavigate })
   }
   handleChangeFile = e => {
-    console.log(e)
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
@@ -64,7 +63,7 @@ export default class NewBill {
   }
 
   closeBill = () => {   
-      this.onNavigate(ROUTES_PATH['Bills'])
+    this.onNavigate(ROUTES_PATH['Bills'])
   }
 
   // not need to cover this function by tests
