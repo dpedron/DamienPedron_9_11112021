@@ -1,5 +1,6 @@
 .form-newbill-container {
   width: 100%;
+  margin-bottom: 76px;
 }
 
 .col-half {
@@ -60,4 +61,17 @@ textarea:focus, input:focus, select:focus {
 
 *[placeholder] {
   color: #0E5AE5 !important;
+}
+
+#bad-format{
+  color: red;
+}
+
+.close {
+  
+  margin-top: -13px;
+}
+
+.close span{
+  font-size: 40px;
 }
