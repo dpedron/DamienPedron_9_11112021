@@ -21,17 +21,25 @@ const onNavigate = (pathname) => {
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
-    describe("The page is loading", () => {
+    describe("Then the page is loading", () => {
       test("Loading page should be rendered", () => {
         document.body.innerHTML = BillsUI({ loading: true });
         expect(screen.getAllByText('Loading...')).toBeTruthy();
       })
     })
 
-    describe("There is an error", () => {
+    describe("Then there is an error", () => {
       test("Error page should be rendered", () => {
         document.body.innerHTML = BillsUI({ error: 'Error' });
         expect(screen.getByTestId('error-message')).toBeTruthy()
+      })
+    })
+
+    describe("Then there is no bill", () => {
+      test("No icon eye should be display", () => {
+        document.body.innerHTML = BillsUI({ data: [] });     
+        const firstIconEye = document.querySelectorAll(`div[data-testid="icon-eye"]`)[0];
+        expect(firstIconEye).toBeFalsy();
       })
     })
 
@@ -52,7 +60,7 @@ describe("Given I am connected as an employee", () => {
     })
 
     describe('Then click on icon eye', () => {
-      test("should open a modal", () => {
+      test("Should open a modal", () => {
         document.body.innerHTML = BillsUI({ data: bills });
         const firstIconEye = screen.getAllByTestId("icon-eye")[0];
         const testBills = new Bills({ document, onNavigate, firestore: null, localStorage: localStorageMock });
@@ -67,8 +75,7 @@ describe("Given I am connected as an employee", () => {
         const testBills = new Bills({ document, onNavigate, firestore: null, localStorage: localStorageMock });
         $.fn.modal = jest.fn();
         testBills.handleClickIconEye(firstIconEye);
-        expect(document.querySelector(".modal")).toBeTruthy();  
-
+        expect(document.getElementById("modaleFile")).toBeTruthy();
       })
     })
 
@@ -81,6 +88,7 @@ describe("Given I am connected as an employee", () => {
         buttonNewBill.addEventListener("click", testBills.handleClickNewBill);
         fireEvent.click(buttonNewBill);
         expect(testBills.handleClickNewBill).toBeCalled();
+        expect(screen.getAllByText('Envoyer une note de frais')).toBeTruthy();
       })
     })
   })

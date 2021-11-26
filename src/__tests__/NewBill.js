@@ -5,8 +5,8 @@ import { fireEvent } from "@testing-library/dom"
 import { ROUTES, ROUTES_PATH } from '../constants/routes.js'
 import { localStorageMock } from "../__mocks__/localStorage.js"
 import firestore from "../app/Firestore.js"
-import firebase from "../__mocks__/firebase.js"
 import BillsUI from "../views/BillsUI.js"
+import firebase from "../__mocks__/firebase.js"
 
 jest.mock('../app/Firestore.js')  
 
@@ -37,7 +37,7 @@ describe("Given I am connected as an employee", () => {
       expect(screen.getByTestId('file')).toBeTruthy();
     })
 
-    describe('I click on the X', () => {
+    describe('Then I click on the X', () => {
       test("Should close the page", () => {
         document.body.innerHTML = NewBillUI();
         const newBill = new NewBill({ document, onNavigate, firestore, localStorage: localStorageMock })
@@ -49,25 +49,33 @@ describe("Given I am connected as an employee", () => {
       })
     })
 
-    describe("I select a file", () => {
-      describe("A good type of file is selected", () => {
+    describe("Then I select a file", () => {
+      describe("Then a good type of file is selected", () => {
         test("Should keep the file", () => {
-        document.body.innerHTML = NewBillUI();
+        document.body.innerHTML = NewBillUI();        
+        const firestoreMock = {
+          ref: jest.fn().mockReturnThis(),
+          put: jest.fn().mockImplementation(() => Promise.resolve({ ref: {getDownloadURL: () => Promise.resolve()} })),
+        };
+        const firestore = {
+          storage : firestoreMock
+        }
         const newBill = new NewBill({ document, onNavigate, firestore, localStorage: localStorageMock });
         const file = screen.getByTestId('file');
-        const fileExtension = new RegExp('^.+\.(jpg|jpeg|png)$', "i");
-        newBill.handleChangeFile = jest.fn()
-        file.addEventListener("change", newBill.handleChangeFile);
+        const fileExtension = new RegExp('^.+\.((jpg)|(jpeg)|(png))$', "i");
+        const newFile  = new File(['bill'], 'bill.jpg', { type: "image/jpeg" });
+        const handleChangeFile = jest.fn(newBill.handleChangeFile)
+        file.addEventListener("change", handleChangeFile);
         fireEvent.change(file, {
-          target: { files: [new File(['bill.jpg'], 'bill.jpg', { type: "image/jpg" })] }
+          target: { files: [newFile], }
         });
-        expect(newBill.handleChangeFile).toHaveBeenCalled();
-        expect(fileExtension.test(file.files[0].name)).toBeTruthy();
-        expect(screen.getByTestId('error')).toBeFalsy();
+        expect(fileExtension.test(file.files[0].name)).toBeTruthy();      
+        expect(handleChangeFile).toHaveBeenCalled();
+        expect(document.getElementById('bad-format')).toBeFalsy();
         })
       })
 
-      describe("A bad type of file is selected", () => {
+      describe("Then a bad type of file is selected", () => {
         test("Should reject the file and display an error", () => {
           document.body.innerHTML = NewBillUI();
           const newBill = new NewBill({ document, onNavigate, firestore, localStorage: localStorageMock })
@@ -81,45 +89,49 @@ describe("Given I am connected as an employee", () => {
           const file = screen.getByTestId('file').files[0].name;
           expect(newBill.handleChangeFile).toHaveBeenCalled();
           expect(fileExtension.test(file)).toBeFalsy();
-          expect(screen.getByTestId('error')).toBeTruthy();
+          expect(document.getElementById('bad-format')).toBeTruthy();          
+        })
+        describe("Then a good type of file is selected", () => {
+          test("Should remove error message", () => {
+            document.body.innerHTML = NewBillUI();
+            const errorExtension = document.createElement('p');
+            errorExtension.id = 'bad-format';
+            errorExtension.setAttribute("data-testid", "error");
+            errorExtension.innerText = "Veuillez sélectionner une image (.jpg, .jpeg ou .png)";            
+            screen.getByTestId('file').parentElement.appendChild(errorExtension);        
+            const firestoreMock = {
+              ref: jest.fn().mockReturnThis(),
+              put: jest.fn().mockImplementation(() => Promise.resolve({ ref: {getDownloadURL: () => Promise.resolve()} })),
+            };
+            const firestore = {
+              storage : firestoreMock
+            }
+            const newBill = new NewBill({ document, onNavigate, firestore, localStorage: localStorageMock });
+            const file = screen.getByTestId('file');
+            const fileExtension = new RegExp('^.+\.((jpg)|(jpeg)|(png))$', "i");
+            const newFile  = new File(['bill'], 'bill.jpg', { type: "image/jpeg" });
+            const handleChangeFile = jest.fn(newBill.handleChangeFile)
+            file.addEventListener("change", handleChangeFile);
+            fireEvent.change(file, {
+              target: { files: [newFile], }
+            });
+            expect(fileExtension.test(file.files[0].name)).toBeTruthy();      
+            expect(handleChangeFile).toHaveBeenCalled();
+            expect(document.getElementById('bad-format')).toBeFalsy();
+          })
         })
       })
     })   
 
-    describe("I submit the form", () => {
+    describe("Then I submit the form", () => {
       test("New bill should be created", () => {
         document.body.innerHTML = NewBillUI();
-        const newBill = new NewBill({ document, onNavigate, firestore, localStorage: localStorageMock });
-        const bill = {
-          email : 'damien@damien.fr',
-          type: 'Transports',
-          name:  'London',
-          amount: 200,
-          date:  '23-11-2021',
-          vat: 70,
-          pct: 10,
-          commentary: 'Flight ticket to London',
-          fileUrl: './london.jpg',
-          fileName: 'london.jpg',
-          status: 'pending'
-        };
-        newBill.createBill = (newBill) => newBill;
-        screen.getByTestId('expense-type').value = bill.type;
-        screen.getByTestId('expense-name').value = bill.name;
-        screen.getByTestId('datepicker').value = bill.amount;
-        screen.getByTestId('amount').value = bill.date;
-        screen.getByTestId('vat').value = bill.vat;
-        screen.getByTestId('pct').value = bill.pct || 20;
-        screen.getByTestId('commentary').value = bill.commentary;
-        newBill.fileUrl = bill.fileUrl;
-        newBill.fileName = bill.fileName;   
+        const newBill = new NewBill({ document, onNavigate, firestore: null, localStorage: localStorageMock });
         const form = screen.getByTestId("form-new-bill");
-        const submitBtn = screen.getByText("Envoyer");  
-        const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));       
-        newBill.onNavigate = jest.fn();
+        const handleSubmit = jest.fn(newBill.handleSubmit);
         form.addEventListener("submit", handleSubmit);
-        submitBtn.click();
-        expect(handleSubmit).toHaveBeenCalled();
+        fireEvent.submit(form);
+        expect(handleSubmit).toHaveBeenCalled();        
       })
     })
   })
@@ -128,7 +140,7 @@ describe("Given I am connected as an employee", () => {
 // test d'intégration POST
 describe("Given I am a user connected as Employee", () => {
   describe("When I submit a new bill", () => {
-    test("POST bill to API", async () => {
+    test("post bill to API", async () => {
        const postSpy = jest.spyOn(firebase, "post");
        const bill = {
         id: "azerty123",
@@ -149,7 +161,7 @@ describe("Given I am a user connected as Employee", () => {
        expect(postSpy).toHaveBeenCalledTimes(1);
        expect(bills.data.length).toBe(5);
     });
-    test("fetches bills from an API and fails with 404 message error", async () => {
+    test("post bill to an API and fails with 404 message error", async () => {
       firebase.post.mockImplementationOnce(() =>
         Promise.reject(new Error("Erreur 404"))
       );
@@ -157,7 +169,7 @@ describe("Given I am a user connected as Employee", () => {
       const message = await screen.getByText(/Erreur 404/)
       expect(message).toBeTruthy();
     });
-    test("fetches messages from an API and fails with 500 message error", async () => {
+    test("post bill to an API and fails with 500 message error", async () => {
       firebase.post.mockImplementationOnce(() =>
         Promise.reject(new Error("Erreur 500"))
       );

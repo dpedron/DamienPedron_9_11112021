@@ -1,3 +1,5 @@
+import firebase from "./firebase.js"
+
 export default {
   get: () => {
     return Promise.resolve({

@@ -18,15 +18,14 @@ export default class NewBill {
     new Logout({ document, localStorage, onNavigate })
   }
   handleChangeFile = e => {
-    const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
-    const filePath = e.target.value.split(/\\/g)
-    const fileName = filePath[filePath.length-1]
-    const fileExtension = new RegExp('^.+\.(jpg|jpeg|png)$', "i")
+    const file = e.target.files[0]
+    const fileName = file.name
+    const fileExtension = new RegExp('^.+\.((jpg)|(jpeg)|(png))$', "i");
     const errorExtension = document.createElement('p');
-    errorExtension.id = 'bad-format'
+    errorExtension.id = 'bad-format';
     errorExtension.setAttribute("data-testid", "error");
-    errorExtension.innerText = "Veuillez sélectionner une image (.jpg, .jpeg ou .png)"
-    document.getElementById('bad-format') ? document.getElementById('bad-format').remove() : ""
+    errorExtension.innerText = "Veuillez sélectionner une image (.jpg, .jpeg ou .png)";
+    document.getElementById('bad-format') ? document.getElementById('bad-format').remove() : "";
     if (fileExtension.test(fileName)){
       this.firestore
         .storage
