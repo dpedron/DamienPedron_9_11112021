@@ -1,3 +1,4 @@
+/* import { formatDate } from '../app/format.js' */
 import { ROUTES_PATH } from '../constants/routes.js'
 import { formatStatus } from "../app/format.js"
 import Logout from "./Logout.js"
@@ -22,8 +23,8 @@ export default class {
 
   handleClickIconEye = (icon) => {
     const billUrl = icon.getAttribute("data-bill-url")
-    const imgWidth = Math.floor($('#modaleFile').width() * 0.5)
-    $('#modaleFile').find(".modal-body").html(`<div style='text-align: center;'><img width=${imgWidth} src=${billUrl} /></div>`)
+    /* const imgWidth = Math.floor($('#modaleFile').width() * 0.5) */
+    $('#modaleFile').find(".modal-body").html(`<div style='text-align: center;'><img width=100% src=${billUrl} /></div>`)
     $('#modaleFile').modal('show')
   }
 

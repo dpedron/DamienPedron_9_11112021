@@ -64,18 +64,12 @@ describe("Given I am connected as an employee", () => {
         document.body.innerHTML = BillsUI({ data: bills });
         const firstIconEye = screen.getAllByTestId("icon-eye")[0];
         const testBills = new Bills({ document, onNavigate, firestore: null, localStorage: localStorageMock });
-        testBills.handleClickIconEye = jest.fn();
-        firstIconEye.addEventListener('click', testBills.handleClickIconEye);
-        fireEvent.click(firstIconEye);
-        expect(testBills.handleClickIconEye).toBeCalled();
-      })
-      test("and should display bill proof", () => {
-        document.body.innerHTML = BillsUI({ data: bills })
-        const firstIconEye = screen.getAllByTestId("icon-eye")[0];
-        const testBills = new Bills({ document, onNavigate, firestore: null, localStorage: localStorageMock });
         $.fn.modal = jest.fn();
-        testBills.handleClickIconEye(firstIconEye);
-        expect(document.getElementById("modaleFile")).toBeTruthy();
+        const handleClickIconEye = jest.fn(testBills.handleClickIconEye(firstIconEye));
+        firstIconEye.addEventListener('click', handleClickIconEye);
+        fireEvent.click(firstIconEye);
+        expect(handleClickIconEye).toBeCalled();
+        expect(document.getElementById('modaleFile')).toBeTruthy();
       })
     })
 

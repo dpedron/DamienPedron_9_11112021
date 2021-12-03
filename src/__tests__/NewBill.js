@@ -124,14 +124,15 @@ describe("Given I am connected as an employee", () => {
     })   
 
     describe("Then I submit the form", () => {
-      test("New bill should be created", () => {
+      test("New bill should be created and i should go back to Bills page", () => {
         document.body.innerHTML = NewBillUI();
         const newBill = new NewBill({ document, onNavigate, firestore: null, localStorage: localStorageMock });
         const form = screen.getByTestId("form-new-bill");
         const handleSubmit = jest.fn(newBill.handleSubmit);
         form.addEventListener("submit", handleSubmit);
         fireEvent.submit(form);
-        expect(handleSubmit).toHaveBeenCalled();        
+        expect(handleSubmit).toHaveBeenCalled(); 
+        expect(screen.getAllByText('Mes notes de frais')).toBeTruthy();       
       })
     })
   })

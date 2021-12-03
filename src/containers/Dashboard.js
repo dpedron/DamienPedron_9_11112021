@@ -1,4 +1,4 @@
-import { formatDate } from '../app/format.js'
+/* import { formatDate } from '../app/format.js' */
 import DashboardFormUI from '../views/DashboardFormUI.js'
 import BigBilledIcon from '../assets/svg/big_billed.js'
 import { ROUTES_PATH } from '../constants/routes.js'
@@ -45,7 +45,7 @@ export const card = (bill) => {
         <span> ${bill.amount} € </span>
       </div>
       <div class='date-type-container'>
-        <span> ${formatDate(bill.date)} </span>
+        <span> ${bill.date} </span>
         <span> ${bill.type} </span>
       </div>
     </div>
@@ -81,8 +81,8 @@ export default class {
 
   handleClickIconEye = () => {
     const billUrl = $('#icon-eye-d').attr("data-bill-url")
-    const imgWidth = Math.floor($('#modaleFileAdmin1').width() * 0.8)
-    $('#modaleFileAdmin1').find(".modal-body").html(`<div style='text-align: center;'><img width=${imgWidth} src=${billUrl} /></div>`)
+    /* const imgWidth = Math.floor($('#modaleFileAdmin1').width() * 0.8) */
+    $('#modaleFileAdmin1').find(".modal-body").html(`<div style='text-align: center;'><img width=100% src=${billUrl} /></div>`)
     if (typeof $('#modaleFileAdmin1').modal === 'function') $('#modaleFileAdmin1').modal('show')
   }
 
